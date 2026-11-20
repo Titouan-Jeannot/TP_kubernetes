@@ -1,0 +1,18 @@
+# Image contenant Maven et le JDK 21
+FROM maven:3.9-eclipse-temurin-21
+
+# Répertoire de travail
+WORKDIR /app
+
+# Copier les fichiers du projet
+COPY pom.xml .
+COPY src/ ./src/
+
+# Compiler l'application Java
+RUN mvn clean package -DskipTests
+
+# Port utilisé par Spring Boot
+EXPOSE 8080
+
+# Lancer l'application
+CMD ["java", "-jar", "target/java-api-1.0.0.jar"]
