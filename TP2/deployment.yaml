@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: python-api-deployment
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: python-api
+
+  template:
+    metadata:
+      labels:
+        app: python-api
+
+    spec:
+      containers:
+        - name: python-api
+
+          image: titouan2235/tp1pythonkub:1.0
+
+          ports:
+            - containerPort: 8000
+
