@@ -1,0 +1,29 @@
+
+# Version de l'API Kubernetes pour les Ingress
+apiVersion: networking.k8s.io/v1
+
+kind: Ingress
+
+metadata:
+  name: frontend-ingress
+
+spec:
+  # Contrôleur Ingress utilisé sur SSP Cloud
+  ingressClassName: nginx
+
+  rules:
+    # Domaine public de l'application trois tiers
+    - host: frontend-titouanjeannot.lab.sspcloud.fr
+
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+
+            # Redirection vers le Service frontend
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 5000
+

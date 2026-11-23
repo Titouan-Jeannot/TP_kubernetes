@@ -1,0 +1,63 @@
+
+# Déploiement de l'API backend
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: backend
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: backend
+
+  template:
+    metadata:
+      labels:
+        app: backend
+
+    spec:
+      containers:
+        - name: backend
+
+          # Image fournie pour le TP
+          image: hugosmn5/backend-3-tier:1.1
+
+          # Configuration de la connexion PostgreSQL
+          env:
+            - name: DB_USER
+              value: "admin"
+
+            - name: DB_PASS
+              value: "password"
+
+            - name: DB
+              value: "reviews"
+
+            - name: DB_HOST
+              value: "postgres"
+
+          ports:
+            - containerPort: 5000
+
+---
+# Service permettant au frontend de contacter le backend
+apiVersion: v1
+kind: Service
+
+metadata:
+  # Le nom "backend" est imposé par le fonctionnement du frontend
+  name: backend
+
+spec:
+  type: ClusterIP
+
+  selector:
+    app: backend
+
+  ports:
+    - port: 5000
+      targetPort: 5000
+

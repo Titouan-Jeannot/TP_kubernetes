@@ -1,0 +1,50 @@
+
+# Déploiement du frontend
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: frontend
+
+spec:
+  # Un seul replica pour commencer
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: frontend
+
+  template:
+    metadata:
+      labels:
+        app: frontend
+
+    spec:
+      containers:
+        - name: frontend
+
+          # Image fournie par le professeur
+          image: hugosmn5/frontend-3-tier:1.1
+
+          # Port d'écoute de l'application
+          ports:
+            - containerPort: 5000
+
+---
+# Service permettant d'accéder au frontend
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: frontend
+
+spec:
+  type: ClusterIP
+
+  selector:
+    app: frontend
+
+  ports:
+    - port: 5000
+      targetPort: 5000
+

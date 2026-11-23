@@ -1,0 +1,55 @@
+
+# Déploiement de la base PostgreSQL
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: postgres
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: postgres
+
+  template:
+    metadata:
+      labels:
+        app: postgres
+
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:13
+
+          # Variables de configuration de PostgreSQL
+          env:
+            - name: POSTGRES_USER
+              value: "admin"
+            - name: POSTGRES_PASSWORD
+              value: "password"
+            - name: POSTGRES_DB
+              value: "reviews"
+
+          ports:
+            - containerPort: 5432
+
+---
+# Service permettant au backend de joindre PostgreSQL
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: postgres
+
+spec:
+  type: ClusterIP
+
+  selector:
+    app: postgres
+
+  ports:
+    - port: 5432
+      targetPort: 5432
+

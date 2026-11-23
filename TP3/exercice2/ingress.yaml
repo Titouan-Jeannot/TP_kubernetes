@@ -1,0 +1,31 @@
+
+# Version de l'API Kubernetes pour les Ingress
+apiVersion: networking.k8s.io/v1
+
+# Création d'un Ingress
+kind: Ingress
+
+metadata:
+  name: python-api-ingress
+
+spec:
+  # Contrôleur Ingress (à vérifier sur SSP Cloud)
+  ingressClassName: nginx
+
+  # Règles de routage HTTP
+  rules:
+    - host: python-api-titouanjeannot.lab.sspcloud.fr
+
+      http:
+        paths:
+          # Toutes les routes commençant par /
+          - path: /
+            pathType: Prefix
+
+            # Service vers lequel envoyer les requêtes
+            backend:
+              service:
+                name: python-api-service
+                port:
+                  number: 80
+
