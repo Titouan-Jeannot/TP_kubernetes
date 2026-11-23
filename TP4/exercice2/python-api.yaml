@@ -1,0 +1,41 @@
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: python-api-deployment
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: python-api
+
+  template:
+    metadata:
+      labels:
+        app: python-api
+
+    spec:
+      containers:
+        - name: python-api
+          image: titouan2235/tp1pythonkub:1.0
+
+          # Interdire les écritures dans le filesystem racine
+          securityContext:
+            readOnlyRootFilesystem: true
+
+          # Monter le volume temporaire sur /tmp
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+
+          ports:
+            - containerPort: 8000
+
+      # Définir le volume temporaire au niveau du Pod
+      volumes:
+        - name: tmp
+          emptyDir: {}
+
