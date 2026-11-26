@@ -10,3 +10,7 @@ def hello():
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+@app.get("/ensai")
+def ensai():
+    return {"message": "Bienvenue à l'ENSAI !"}

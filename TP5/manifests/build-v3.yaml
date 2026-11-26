@@ -1,0 +1,68 @@
+
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: build-python-v3
+
+spec:
+  backoffLimit: 1
+
+  template:
+    spec:
+      restartPolicy: Never
+
+      # Préparer les fichiers avant la construction
+      initContainers:
+        - name: prepare-context
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /workspace/src
+              cp /config/Dockerfile /workspace/
+              cp /config/requirements.txt /workspace/
+              cp /config/main.py /workspace/src/
+          volumeMounts:
+            - name: source
+              mountPath: /config
+            - name: workspace
+              mountPath: /workspace
+
+      containers:
+        - name: kaniko
+          # Constructeur d'images sans daemon Docker
+          image: ghcr.io/osscontainertools/kaniko:latest
+
+          args:
+            - "--context=dir:///workspace"
+            - "--dockerfile=/workspace/Dockerfile"
+            - "--destination=docker.io/titouan2235/tp1pythonkub:v3"
+
+          volumeMounts:
+            - name: workspace
+              mountPath: /workspace
+
+            # Identifiants pour publier sur Docker Hub
+            - name: dockerhub-auth
+              mountPath: /kaniko/.docker
+              readOnly: true
+
+      volumes:
+        # Fichiers provenant du ConfigMap
+        - name: source
+          configMap:
+            name: tp5-build-context-v3
+
+        # Dossier partagé entre les deux conteneurs
+        - name: workspace
+          emptyDir: {}
+
+        # Secret d'authentification Docker Hub
+        - name: dockerhub-auth
+          secret:
+            secretName: dockerhub-auth
+            items:
+              - key: .dockerconfigjson
+                path: config.json
